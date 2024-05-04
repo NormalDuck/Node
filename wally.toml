@@ -1,0 +1,27 @@
+[package]
+name = "1juhu/maze-of-mystery"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Knit = "sleitnick/knit@1.6.0"
+Signal = "sleitnick/signal@2.0.1"
+Shake = "sleitnick/shake@0.1.7"
+TableUtil = "sleitnick/table-util@1.2.1"
+Input = "sleitnick/input@2.3.0"
+Component = "sleitnick/component@2.4.8"
+Comm = "sleitnick/comm@1.0.1"
+Trove = "sleitnick/trove@1.1.0"
+promise = "evaera/promise@4.0.0"
+t = "osyrisrblx/t@3.1.1"
+Promise = "evaera/promise@4.0.0"
+Fusion = "elttob/fusion@0.2.0"
+ByteNet = "ffrostflame/bytenet@0.4.5"
+LemonSignal = "data-oriented-house/lemonsignal@1.10.0"
+
+[server-dependencies]
+Suphi = "skylord-103/suphisdatastoremodule@1.0.0"
+
+[place]
+shared-packages = "game.ReplicatedStorage.Packages"
