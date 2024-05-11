@@ -12,6 +12,7 @@ export type Node = {
 	FindNode: (self: Node, x: number, y: number) -> (),
 	FindNeighbors: (self: Node) -> { Node },
 	FindSurroundings: (self: Node) -> { Node },
+	FindSurroundingsDeep: (self: Node, Depth: number) -> (),
 	AddData: (self: Node, Key: string, Value: any) -> (),
 	OverrideData: (self: Node, Key: string, Value: any | (oldData: any) -> any) -> (),
 	ReconcileData: (self: Node, Template: { [string]: any }) -> Node,
@@ -25,7 +26,7 @@ export type Board = {
 	nodes: { [number]: Node },
 	FindNode: (self: Board, x: number, y: number) -> Node | nil,
 	RandomNode: (self: Board) -> Node,
-	RandomSquare: (self: Board) -> { Node } | nil,
+	RandomSquare: (self: Board, SquareSize: number) -> { Node } | nil,
 	RandomRectangle: (self: Board, length: number, width: number) -> { Node } | nil,
 }
 
@@ -267,20 +268,25 @@ end
 --[=[
 	@return { Node }
 	finds a random rectangle
+	:::caution
+	may recursively find rectangle if the random node doesn't have a square. This **may** lead to potential yielding but the chances are **depends on the board size**.
+	:::
+	@yields
 ]=]
-function Board:RandomRectangle(length: number, width: number)
+function Board:RandomRectangle(length: number, width: number, usePromise)
 	local function findSquare()
 		local randomNode = self:RandomNode()
 		local neighbors = {}
 		for x = 1, length do
-			table.insert(neighbors, randomNode:FindNode(x, 0))
 			for y = 1, width do
-				table.insert(neighbors, randomNode:FindNeighbors(y, 0))
+				table.insert(neighbors, randomNode:FindNode(x, y))
 			end
 		end
+		print(randomNode, neighbors)
 		if #neighbors == length * width then
 			return neighbors
 		else
+			table.clear(neighbors)
 			findSquare()
 		end
 	end

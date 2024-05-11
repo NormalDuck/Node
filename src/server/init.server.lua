@@ -1,5 +1,5 @@
 local node = require(script.node)
 
-local board = node.board.new(4, 4)
+local board = node.board.new(8, 8)
 
-print(board:FindNode(2, 2):FindSurroundings())
+print(board:RandomRectangle(2, 2))
