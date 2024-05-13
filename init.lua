@@ -55,8 +55,7 @@ export type Promise = {
 	timeout: (self: Promise, seconds: number, rejectionValue: any) -> Promise,
 }
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Promise = require(ReplicatedStorage.Packages.Promise)
+local Promise = require(script.Parent:WaitForChild("Promise"))
 
 --UTILITIES--
 local function Copy<T>(t: T, deep: boolean?): T
