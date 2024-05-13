@@ -10,8 +10,8 @@
 * length means **x axis**
 * width means **y axis**
 * If random is specified during construction then random will be used whenever something random is needed."><link data-rh="true" rel="canonical" href="https://NormalDuck.github.io/Node/api/Board"><link data-rh="true" rel="alternate" href="https://NormalDuck.github.io/Node/api/Board" hreflang="en"><link data-rh="true" rel="alternate" href="https://NormalDuck.github.io/Node/api/Board" hreflang="x-default"><link rel="stylesheet" href="/Node/assets/css/styles.19a5646f.css">
-<link rel="preload" href="/Node/assets/js/runtime~main.e5a6a13d.js" as="script">
-<link rel="preload" href="/Node/assets/js/main.9a1df0f5.js" as="script">
+<link rel="preload" href="/Node/assets/js/runtime~main.f05cb5aa.js" as="script">
+<link rel="preload" href="/Node/assets/js/main.caad1f38.js" as="script">
 </head>
 <body class="navigation-with-keyboard">
 <script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
@@ -44,7 +44,7 @@
   </div>
   <div class="admonition-content">
     <p>
-      may recursively find rectangle if the random node doesn't have a square.
+      may recursively find rectangle if the random node doesn't have a rectangle.
       This <strong>may</strong> lead to potential yielding or even stack overflow but the chances are <strong>depends on the board size</strong>.
       to prevent yielding please wrap this method with <code>:UsePromise</code>
     </p>
@@ -81,7 +81,7 @@
     <p>when passing down the method, please create a anoymous function and return the method you're using. <strong>this applies to all <code>Use</code> methods</strong></p>
   </div>
 </div>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="UsePromise"><code style="text-decoration:none">UsePromise</code><a href="#UsePromise" class="hash-link" aria-label="Direct link to UsePromise" title="Direct link to UsePromise">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/NormalDuck/Node/blob/master/src/server/node.lua#L421"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Board<!-- -->:</code><code class="green_DgR4">UsePromise</code><code>(</code><div class="inset_uKQm"><div><code>fn<!-- -->: </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="op_lSLc"> | </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="UsePromise"><code style="text-decoration:none">UsePromise</code><a href="#UsePromise" class="hash-link" aria-label="Direct link to UsePromise" title="Direct link to UsePromise">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/NormalDuck/Node/blob/master/src/server/node.lua#L419"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Board<!-- -->:</code><code class="green_DgR4">UsePromise</code><code>(</code><div class="inset_uKQm"><div><code>fn<!-- -->: </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="op_lSLc"> | </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
 <p>the method that is going to be used</p>
 </span></span></div></div><code>) → </code><code class="blue_P4bS">Promise</code></div><div>
 <p>wraps the method you're using with a promise so it can avoid potential yielding.</p>
@@ -105,7 +105,6 @@
     <p>you should wrap this into any potential yielding methods. Promises are very flexible!</p>
   </div>
 </div>
-<p>:::usage</p>
 <pre class="language-lua"><code class="language-lua">	<span class="token keyword">local</span> node <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>node<span class="token punctuation">)</span>
 	<span class="token keyword">local</span> board <span class="token operator">=</span> node<span class="token punctuation">.</span>board<span class="token punctuation">.</span><span class="token function">new</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
 
@@ -115,8 +114,7 @@
 		<span class="token keyword">end</span><span class="token punctuation">)</span>
 		<span class="token punctuation">:</span><span class="token function">andThen</span><span class="token punctuation">(</span>print<span class="token punctuation">)</span>
 </code></pre>
-<p>:::</p>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="UseFilteredResult"><code style="text-decoration:none">UseFilteredResult</code><a href="#UseFilteredResult" class="hash-link" aria-label="Direct link to UseFilteredResult" title="Direct link to UseFilteredResult">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/NormalDuck/Node/blob/master/src/server/node.lua#L450"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Board<!-- -->:</code><code class="green_DgR4">UseFilteredResult</code><code>(</code><div class="inset_uKQm"><div><code>filterOut<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS">string</code><code class="purple_ieR2">}</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="UseFilteredResult"><code style="text-decoration:none">UseFilteredResult</code><a href="#UseFilteredResult" class="hash-link" aria-label="Direct link to UseFilteredResult" title="Direct link to UseFilteredResult">​</a></h3><span class="badge_Ba2I" style="color:#f1c40f"><span class="badgeTooltip_cWXP">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_H9D_"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/NormalDuck/Node/blob/master/src/server/node.lua#L446"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Board<!-- -->:</code><code class="green_DgR4">UseFilteredResult</code><code>(</code><div class="inset_uKQm"><div><code>filterOut<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS">string</code><code class="purple_ieR2">}</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
 <p>the data to see if it should exist</p>
 </span></span></div><div><code>fn<!-- -->: </code><code class="purple_ieR2">(</code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="op_lSLc"> | </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/Node/api/Node">Node</a></code><code class="purple_ieR2">}</code><span class="inlineDescription_G7Er">-- <span>
 <p>the method that is going to be used</p>
@@ -132,7 +130,6 @@
     <p>when passing down the method, please create a anoymous function and return the method you're using. <strong>this applies to all <code>Use</code> methods</strong></p>
   </div>
 </div>
-<p>:::usage</p>
 <pre class="language-lua"><code class="language-lua">	<span class="token keyword">local</span> node <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>to<span class="token punctuation">.</span>node<span class="token punctuation">)</span>
 	<span class="token keyword">local</span> board <span class="token operator">=</span> node<span class="token punctuation">.</span>board<span class="token punctuation">.</span><span class="token function">new</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
 	board
@@ -143,7 +140,6 @@
 		<span class="token keyword">end</span><span class="token punctuation">)</span>
 		<span class="token punctuation">:</span><span class="token function">andThen</span><span class="token punctuation">(</span>print<span class="token punctuation">)</span>
 </code></pre>
-<p>:::</p>
 </div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
     &quot;functions&quot;: [
         {
@@ -223,7 +219,7 @@
         },
         {
             &quot;name&quot;: &quot;RandomRectangle&quot;,
-            &quot;desc&quot;: &quot;finds a random rectangle\n:::caution\nmay recursively find rectangle if the random node doesn&#x27;t have a square. \nThis **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.\nto prevent yielding please wrap this method with `:UsePromise`\n:::&quot;,
+            &quot;desc&quot;: &quot;finds a random rectangle\n:::caution\nmay recursively find rectangle if the random node doesn&#x27;t have a rectangle.\nThis **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.\nto prevent yielding please wrap this method with `:UsePromise`\n:::&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;length&quot;,
@@ -251,7 +247,7 @@
         },
         {
             &quot;name&quot;: &quot;RandomSquare&quot;,
-            &quot;desc&quot;: &quot;:::caution\nmay recursively find rectangle if the random node doesn&#x27;t have a square. \nThis **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.\nto prevent yielding please wrap this method with `:UsePromise`\n:::&quot;,
+            &quot;desc&quot;: &quot;:::caution\nmay recursively find rectangle if the random node doesn&#x27;t have a square.\nThis **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.\nto prevent yielding please wrap this method with `:UsePromise`\n:::&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;size&quot;,
@@ -301,7 +297,7 @@
         },
         {
             &quot;name&quot;: &quot;UsePromise&quot;,
-            &quot;desc&quot;: &quot;wraps the method you&#x27;re using with a promise so it can avoid potential yielding.\n\n:::caution\nwhen passing down the method, please create a anoymous function and return the method you&#x27;re using. **this applies to all `Use` methods**\n:::\n\n:::tip\nyou should wrap this into any potential yielding methods. Promises are very flexible!\n:::\n\n:::usage\n```lua\n\tlocal node = require(path.to.node)\n\tlocal board = node.board.new(2, 2)\n\n\tboard\n\t\t:UsePromise(function()\n\t\t\treturn board:RandomSquare(2) --this method may yield.\n\t\tend)\n\t\t:andThen(print)\n```\n:::&quot;,
+            &quot;desc&quot;: &quot;wraps the method you&#x27;re using with a promise so it can avoid potential yielding.\n\n:::caution\nwhen passing down the method, please create a anoymous function and return the method you&#x27;re using. **this applies to all `Use` methods**\n:::\n\n:::tip\nyou should wrap this into any potential yielding methods. Promises are very flexible!\n:::\n\n```lua\n\tlocal node = require(path.to.node)\n\tlocal board = node.board.new(2, 2)\n\n\tboard\n\t\t:UsePromise(function()\n\t\t\treturn board:RandomSquare(2) --this method may yield.\n\t\tend)\n\t\t:andThen(print)\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;fn&quot;,
@@ -317,13 +313,13 @@
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 421,
+                &quot;line&quot;: 419,
                 &quot;path&quot;: &quot;src/server/node.lua&quot;
             }
         },
         {
             &quot;name&quot;: &quot;UseFilteredResult&quot;,
-            &quot;desc&quot;: &quot;checks if any node needs to be filtered. If any node is determined to be filtered, it will call the function recursively until no node is needed to be filtered.\n:::caution\nwhen passing down the method, please create a anoymous function and return the method you&#x27;re using. **this applies to all `Use` methods**\n:::\n\n:::usage\n```lua\n\tlocal node = require(path.to.node)\n\tlocal board = node.board.new(2, 2)\n\tboard\n\t\t:UsePromise(function()\n\t\t\treturn board:UseFilteredResult({\&quot;Visited\&quot;}, function()\n\t\t\t\treturn board:RandomSquare(2, 2)\n\t\t\tend)\n\t\tend)\n\t\t:andThen(print)\n```\n:::&quot;,
+            &quot;desc&quot;: &quot;checks if any node needs to be filtered. If any node is determined to be filtered, it will call the function recursively until no node is needed to be filtered.\n:::caution\nwhen passing down the method, please create a anoymous function and return the method you&#x27;re using. **this applies to all `Use` methods**\n:::\n\n```lua\n\tlocal node = require(path.to.node)\n\tlocal board = node.board.new(2, 2)\n\tboard\n\t\t:UsePromise(function()\n\t\t\treturn board:UseFilteredResult({\&quot;Visited\&quot;}, function()\n\t\t\t\treturn board:RandomSquare(2, 2)\n\t\t\tend)\n\t\tend)\n\t\t:andThen(print)\n```&quot;,
             &quot;params&quot;: [
                 {
                     &quot;name&quot;: &quot;filterOut&quot;,
@@ -340,7 +336,7 @@
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;yields&quot;: true,
             &quot;source&quot;: {
-                &quot;line&quot;: 450,
+                &quot;line&quot;: 446,
                 &quot;path&quot;: &quot;src/server/node.lua&quot;
             }
         }
@@ -354,7 +350,7 @@
         &quot;path&quot;: &quot;src/server/node.lua&quot;
     }
 }</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#FindNode" class="table-of-contents__link toc-highlight">:FindNode</a></li><li><a href="#RandomNode" class="table-of-contents__link toc-highlight">:RandomNode</a></li><li><a href="#RandomRectangle" class="table-of-contents__link toc-highlight">:RandomRectangle</a></li><li><a href="#RandomSquare" class="table-of-contents__link toc-highlight">:RandomSquare</a></li><li><a href="#UseFilter" class="table-of-contents__link toc-highlight">:UseFilter</a></li><li><a href="#UseFilteredResult" class="table-of-contents__link toc-highlight">:UseFilteredResult</a></li><li><a href="#UsePromise" class="table-of-contents__link toc-highlight">:UsePromise</a></li><li><a href="#new" class="table-of-contents__link toc-highlight">.new</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 NormalDuck. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
-<script src="/Node/assets/js/runtime~main.e5a6a13d.js"></script>
-<script src="/Node/assets/js/main.9a1df0f5.js"></script>
+<script src="/Node/assets/js/runtime~main.f05cb5aa.js"></script>
+<script src="/Node/assets/js/main.caad1f38.js"></script>
 </body>
 </html>
