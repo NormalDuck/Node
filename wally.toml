@@ -1,5 +1,5 @@
 [package]
-name = "1juhu/maze-of-mystery"
+name = "normalduck/node"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"

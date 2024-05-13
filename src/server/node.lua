@@ -1,4 +1,5 @@
 --!native
+debug.setmemorycategory("node")
 export type newNode = { new: (x: number, y: number, DependentTable: Board) -> Node }
 export type newBoard = {
 	new: (length: number, width: number, nodeTemplate: { [string]: any } | nil, random: Random?) -> Board,
@@ -6,17 +7,19 @@ export type newBoard = {
 export type Node = {
 	x: number,
 	y: number,
-	_dependentTable: Board,
+	-- _dependentTable: Board,
 	new: newNode,
 	Data: { [string]: any },
+
 	FindNode: (self: Node, x: number, y: number) -> (),
 	FindNeighbors: (self: Node) -> { Node },
 	FindSurroundings: (self: Node) -> { Node },
 	FindSurroundingsDeep: (self: Node, Depth: number) -> (),
+
 	AddData: (self: Node, Key: string, Value: any) -> (),
 	OverrideData: (self: Node, Key: string, Value: any | (oldData: any) -> any) -> (),
 	ReconcileData: (self: Node, Template: { [string]: any }) -> Node,
-	RetriveData: (self: Node, key: string) -> any,
+	HasData: (self: Node, key: string) -> (boolean, any),
 }
 
 export type Board = {
@@ -25,10 +28,36 @@ export type Board = {
 	width: number,
 	nodes: { [number]: Node },
 	FindNode: (self: Board, x: number, y: number) -> Node | nil,
+
 	RandomNode: (self: Board) -> Node,
-	RandomSquare: (self: Board, SquareSize: number) -> { Node } | nil,
-	RandomRectangle: (self: Board, length: number, width: number) -> { Node } | nil,
+	RandomSquare: (self: Board, squareSize: number) -> { Node } | Promise,
+	RandomRectangle: (self: Board, length: number, width: number) -> { Node } | Promise,
+
+	UseFilter: (self: Board, filterOut: { string }, fn: (method: (...any) -> ...any) -> ()) -> (),
+	UsePromise: (self: Board, fn: (method: (...any) -> ...any) -> ()) -> Promise,
+	UseFilteredResult: (self: Board, filterOut: { string }) -> (),
 }
+
+export type Promise = {
+	awaitValue: any,
+	andThen: (self: Promise, successHandler: any, failureHandler: any) -> Promise,
+	andThenCall: (self: Promise, callback: any, ...any) -> Promise,
+	andThenReturn: (self: Promise, ...any) -> Promise,
+	await: (self: Promise) -> (boolean, ...any),
+	awaitStatus: (self: Promise) -> (Status, ...any),
+	cancel: (self: Promise) -> (),
+	catch: (self: Promise, failureHandler: any) -> Promise,
+	expect: (self: Promise) -> ...any,
+	finally: (self: Promise, finallyHandler: (status: Status) -> ...any) -> (),
+	finallyReturn: (self: Promise, ...any) -> Promise,
+	getStatus: (self: Promise, Status) -> (),
+	now: (self: Promise, rejectionValue: any) -> Promise,
+	tap: (self: Promise, tapHandler: any) -> Promise,
+	timeout: (self: Promise, seconds: number, rejectionValue: any) -> Promise,
+}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Promise = require(ReplicatedStorage.Packages.Promise)
 
 --UTILITIES--
 local function Copy<T>(t: T, deep: boolean?): T
@@ -72,6 +101,16 @@ local function Reconcile<S, T>(src: S, template: T): S & T
 
 	return (tbl :: any) :: S & T
 end
+
+local function ToBool(data: any): boolean
+	if type(data) == "boolean" then
+		return data
+	elseif type(data) == "nil" then
+		return false
+	else
+		return true
+	end
+end
 --UTILITIES--
 
 --[=[
@@ -99,7 +138,7 @@ Board.__index = Board
 	@return Node
 ]=]
 function Node.new(x: number, y: number, DependentTable: Board)
-	local self: Node = setmetatable({}, Node)
+	local self = setmetatable({} :: Node, Node)
 	self.x = x
 	self.y = y
 	self._dependentTable = DependentTable
@@ -194,15 +233,6 @@ function Node:OverrideData(key, value)
 end
 
 --[=[
-	@param key string -- the place to  data
-	@return any -- the data that is attached
-	abstraction for geting the data
-]=]
-function Node:RetriveData(key)
-	return self.Data[key]
-end
-
---[=[
 	@param template { [string]: any }
 	@return Node
 	reconciles data to the node. Returns self for internal reason.
@@ -210,6 +240,23 @@ end
 function Node:ReconcileData(template)
 	self.Data = Reconcile(self.Data, template)
 	return self
+end
+
+--[=[
+	@param key string -- the key to check if the data exists or not
+	@return boolean, any
+
+	returns a tuple, first param is exists and the second is the data that it has. 
+	```lua
+		local node = require(path.to.node)
+		local thisNode = node.node.new(...)
+		local exists, data = thisNode:HasData("CustomData")
+		print(exists) -- false
+		print(data) -- nil
+	```
+]=]
+function Node:HasData(key: string)
+	return (self.Data[key] ~= nil), self.Data[key]
 end
 
 --[=[
@@ -221,7 +268,7 @@ end
 	If random is specified then any random calculations will be using the random you provided
 ]=]
 function Board.new(length: number, width: number, nodeTemplate: { [string]: any } | nil, random: Random?)
-	local self: Board = setmetatable({}, Board)
+	local self = setmetatable({} :: Board, Board)
 	self.length = length
 	self.width = width
 	self.nodes = {}
@@ -247,7 +294,7 @@ end
 ]=]
 function Board:FindNode(x: number, y: number)
 	for i = 1, #self.nodes do
-		if self.nodes[i].x == x and self.nodes[i].y == x then
+		if self.nodes[i].x == x and self.nodes[i].y == y then
 			return self.nodes[i]
 		end
 	end
@@ -255,7 +302,7 @@ end
 
 --[=[
 	@return Node
-	s a random node in the board
+	returns a random node on the board.
 ]=]
 function Board:RandomNode()
 	if self.random then
@@ -267,14 +314,16 @@ end
 
 --[=[
 	@return { Node }
+	@yields
 	finds a random rectangle
 	:::caution
-	may recursively find rectangle if the random node doesn't have a square. This **may** lead to potential yielding but the chances are **depends on the board size**.
+	may recursively find rectangle if the random node doesn't have a square. 
+	This **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.
+	to prevent yielding please wrap this method with `:UsePromise`
 	:::
-	@yields
 ]=]
-function Board:RandomRectangle(length: number, width: number, usePromise)
-	local function findSquare()
+function Board:RandomRectangle(length: number, width: number)
+	local function findRectangle()
 		local randomNode = self:RandomNode()
 		local neighbors = {}
 		for x = 1, length do
@@ -282,23 +331,136 @@ function Board:RandomRectangle(length: number, width: number, usePromise)
 				table.insert(neighbors, randomNode:FindNode(x, y))
 			end
 		end
-		print(randomNode, neighbors)
 		if #neighbors == length * width then
 			return neighbors
 		else
 			table.clear(neighbors)
-			findSquare()
 		end
 	end
-	findSquare()
+	local result = findRectangle()
+	while result == nil do
+		result = findRectangle()
+	end
+	return result
 end
 
 --[=[
-	@return {Node}
-	finds a random square in the table
+	@return { Node }
+	@yields
+	:::caution
+	may recursively find rectangle if the random node doesn't have a square. 
+	This **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.
+	to prevent yielding please wrap this method with `:UsePromise`
+	:::
 ]=]
 function Board:RandomSquare(size: number)
 	return self:RandomRectangle(size, size)
+end
+
+--[=[
+	@param fn () -> Node | {Node} --the method that is going to be used
+	@param filterOut {string} -- the data to see if it should exist
+	@return { Node } | nil
+	Removes the result of the node. If the value attached to the key is `false` it will still be filtered out.
+	:::notice
+	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
+	:::
+]=]
+function Board:UseFilter(filterOut: { string }, fn: () -> Node | { Node })
+	local result = fn()
+	--having dependent table asumes its not bundled up into another table.
+	if result._dependentTable then
+		for i = 1, #filterOut do
+			local hasdata = result:HasData(filterOut[i])
+			if hasdata then
+				return nil
+			else
+				print(result)
+				return result
+			end
+		end
+	else
+		local returnValue = {}
+		for key = 1, #filterOut do
+			for i = 1, #result do
+				local hasdata = result[i]:HasData(filterOut[key])
+				if not hasdata then
+					table.insert(returnValue, result[i])
+				end
+			end
+		end
+		return returnValue
+	end
+end
+
+--[=[
+	@param fn () -> Node | {Node} --the method that is going to be used
+	@return Promise
+
+	wraps the method you're using with a promise so it can avoid potential yielding.
+
+	:::notice
+	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
+	:::
+	```lua
+		local node = require(path.to.node)
+		local board = node.board.new(2, 2)
+
+		board
+			:UsePromise(function()
+				return board:RandomSquare(2) --this method may yield.
+			end)
+			:andThen(print)
+	```
+]=]
+function Board:UsePromise(fn: () -> ())
+	return Promise.new(function(resolve)
+		resolve(fn())
+	end)
+end
+
+--[=[
+	@param fn () -> Node | {Node} --the method that is going to be used
+	@param filterOut {string} -- the data to see if it should exist
+	@yields
+	checks if any node needs to be filtered. If any node is determined to be filtered, it will call the function recursively until no node is needed to be filtered.
+	:::notice
+	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
+	:::
+]=]
+function Board:UseFilteredResult(filterOut: { string }, fn: () -> Node | { Node })
+	local result = fn()
+	local function scan()
+		if result._dependentTable then
+			for i = 1, #filterOut do
+				local hasdata = result:HasData(filterOut[i])
+				if hasdata then
+					return false
+				else
+					return true
+				end
+			end
+		else
+			local returnValue = {}
+			for key = 1, #filterOut do
+				for i = 1, #result do
+					local hasdata = result[i]:HasData(filterOut[key])
+					if not hasdata then
+						table.insert(returnValue, result[i])
+					else
+						return false
+					end
+				end
+			end
+			return true
+		end
+	end
+	local recursive = scan()
+	while recursive do
+		result = fn()
+		recursive = scan()
+	end
+	return result
 end
 
 return { node = Node, board = Board } :: { node: newNode, board: newBoard }

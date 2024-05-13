@@ -19,9 +19,6 @@
     },
 
     "ServerStorage": {
-      "ServerPackages": {
-        "$path": "ServerPackages"
-      }
     },
 
     "StarterPlayer": {
