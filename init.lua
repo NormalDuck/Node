@@ -1,5 +1,4 @@
 --!native
-debug.setmemorycategory("node")
 export type newNode = { new: (x: number, y: number, DependentTable: Board) -> Node }
 export type newBoard = {
 	new: (length: number, width: number, nodeTemplate: { [string]: any } | nil, random: Random?) -> Board,
