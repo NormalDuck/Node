@@ -115,15 +115,13 @@ end
 
 --[=[
 	@class Node
-
-	
 ]=]
 local Node = {} :: Node
 
 --[=[
 	@class Board
 
-	# Standards
+	### Standards
 	* length means **x axis**
 	* width means **y axis**
 	* If random is specified during construction then random will be used whenever something random is needed.
@@ -246,7 +244,7 @@ end
 	@param key string -- the key to check if the data exists or not
 	@return boolean, any
 
-	returns a tuple, first param is exists and the second is the data that it has. 
+	returns a tuple, first param is exists and the second is the data that it has.
 	```lua
 		local node = require(path.to.node)
 		local thisNode = node.node.new(...)
@@ -317,7 +315,7 @@ end
 	@yields
 	finds a random rectangle
 	:::caution
-	may recursively find rectangle if the random node doesn't have a square. 
+	may recursively find rectangle if the random node doesn't have a rectangle.
 	This **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.
 	to prevent yielding please wrap this method with `:UsePromise`
 	:::
@@ -348,7 +346,7 @@ end
 	@return { Node }
 	@yields
 	:::caution
-	may recursively find rectangle if the random node doesn't have a square. 
+	may recursively find rectangle if the random node doesn't have a square.
 	This **may** lead to potential yielding or even stack overflow but the chances are **depends on the board size**.
 	to prevent yielding please wrap this method with `:UsePromise`
 	:::
@@ -362,7 +360,7 @@ end
 	@param filterOut {string} -- the data to see if it should exist
 	@return { Node } | nil
 	Removes the result of the node. If the value attached to the key is `false` it will still be filtered out.
-	:::notice
+	:::caution
 	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
 	:::
 ]=]
@@ -399,9 +397,14 @@ end
 
 	wraps the method you're using with a promise so it can avoid potential yielding.
 
-	:::notice
+	:::caution
 	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
 	:::
+
+	:::tip
+	you should wrap this into any potential yielding methods. Promises are very flexible!
+	:::
+
 	```lua
 		local node = require(path.to.node)
 		local board = node.board.new(2, 2)
@@ -424,10 +427,24 @@ end
 	@param filterOut {string} -- the data to see if it should exist
 	@yields
 	checks if any node needs to be filtered. If any node is determined to be filtered, it will call the function recursively until no node is needed to be filtered.
-	:::notice
+	:::caution
 	when passing down the method, please create a anoymous function and return the method you're using. **this applies to all `Use` methods**
 	:::
+
+	```lua
+		local node = require(path.to.node)
+		local board = node.board.new(2, 2)
+		board
+			:UsePromise(function()
+				return board:UseFilteredResult({"Visited"}, function()
+					return board:RandomSquare(2, 2)
+				end)
+			end)
+			:andThen(print)
+	```
 ]=]
+
+
 function Board:UseFilteredResult(filterOut: { string }, fn: () -> Node | { Node })
 	local result = fn()
 	local function scan()
