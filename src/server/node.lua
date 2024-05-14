@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --!native
 export type newNode = { new: (x: number, y: number, DependentTable: Board) -> Node }
 export type newBoard = {
@@ -9,6 +10,8 @@ export type Node = {
 	-- _dependentTable: Board,
 	new: newNode,
 	Data: { [string]: any },
+
+	extend: () -> (),
 
 	FindNode: (self: Node, x: number, y: number) -> (),
 	FindNeighbors: (self: Node) -> { Node },
@@ -26,6 +29,7 @@ export type Board = {
 	length: number,
 	width: number,
 	nodes: { [number]: Node },
+	extend: () -> (),
 	FindNode: (self: Board, x: number, y: number) -> Node | nil,
 
 	RandomNode: (self: Board) -> Node,
@@ -55,7 +59,8 @@ export type Promise = {
 	timeout: (self: Promise, seconds: number, rejectionValue: any) -> Promise,
 }
 
-local Promise = require(script.Parent:WaitForChild("Promise"))
+local Promise = require(ReplicatedStorage.Packages.Promise)
+
 
 --UTILITIES--
 local function Copy<T>(t: T, deep: boolean?): T
@@ -100,6 +105,14 @@ local function Reconcile<S, T>(src: S, template: T): S & T
 	return (tbl :: any) :: S & T
 end
 
+local function Extend<T, E>(target: { T }, extension: { E }): { T } & { E }
+	local tbl = table.clone(target) :: { any }
+	for _, v in extension do
+		table.insert(tbl, v)
+	end
+	return tbl
+end
+
 local function ToBool(data: any): boolean
 	if type(data) == "boolean" then
 		return data
@@ -142,6 +155,9 @@ function Node.new(x: number, y: number, DependentTable: Board)
 	return self
 end
 
+function Node.extend(ext: {(...any) -> (...any)})
+	Node = Extend(Node, ext)
+end
 --[=[
 	find node using this node's coordinates
 	@return Node | nil
@@ -455,6 +471,7 @@ function Board:UseFilteredResult(filterOut: { string }, fn: () -> Node | { Node 
 					return true
 				end
 			end
+			return false
 		else
 			local returnValue = {}
 			for key = 1, #filterOut do

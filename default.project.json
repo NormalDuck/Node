@@ -1,6 +1,71 @@
 {
-	"name": "node",
+	"name": "Game",
 	"tree": {
-		"$path": "src/"
+	  "$className": "DataModel",
+  
+	  "ReplicatedStorage": {
+		"Packages": {
+			"$path": "Packages"
+		  }
+	  },
+  
+	  "ServerScriptService": {
+		"Server": {
+		  "$path": "src/server"
+		}
+	  },
+  
+	  "ServerStorage": {
+	  },
+  
+	  "StarterPlayer": {
+
+	  },
+  
+	  "Workspace": {
+		"$properties": {
+		  "FilteringEnabled": true
+		},
+		"Baseplate": {
+		  "$className": "Part",
+		  "$properties": {
+			"Anchored": true,
+			"Color": [
+			  0.38823,
+			  0.37254,
+			  0.38823
+			],
+			"Locked": true,
+			"Position": [
+			  0,
+			  -10,
+			  0
+			],
+			"Size": [
+			  512,
+			  20,
+			  512
+			]
+		  }
+		}
+	  },
+	  "Lighting": {
+		"$properties": {
+		  "Ambient": [
+			0,
+			0,
+			0
+		  ],
+		  "Brightness": 2,
+		  "GlobalShadows": false,
+		  "Outlines": false,
+		  "Technology": "Voxel"
+		}
+	  },
+	  "SoundService": {
+		"$properties": {
+		  "RespectFilteringEnabled": true
+		}
+	  }
 	}
-}
+  }
